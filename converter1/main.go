@@ -1,6 +1,6 @@
 package main
 
-import ("fmt";"bufio";"os";"path/filepath";"encoding/gob";"encoding/json")
+import ("fmt";"bufio";"os";"path/filepath";"encoding/gob";"encoding/json";"strconv")
 
 func iiiiiiiiiiii(i interface{}) {
 fmt.Println("");i=bufio.Writer{};i=os.File{};filepath.IsAbs("");i=json.Decoder{}
@@ -71,7 +71,11 @@ type Node struct {
 	Y int	`json:"y"`
 	Size int	`json:"size"`
 }
-type Edge struct {}
+type Edge struct {
+	Id string	`json:"id"`
+	Source string	`json:"source"`
+	Target string	`json:"target"`
+}
 type Graph struct {
 	Nodes []Node `json:"nodes"`
 	Edges []Edge  `json:"edges"`
@@ -90,6 +94,9 @@ func main() {
 
 
 	m := make(map[string]int)
+	dirzid := make(map[string]int)
+//	used := make(map[string]bool)
+
 	var v Fun
 
 	for{
@@ -104,17 +111,57 @@ func main() {
 	s.Close()
 ///////////////////////
 
-
-
 	var graph Graph
 
+	eid := 0
+	did := 1
+	fid := 0
 	for cmd, cnt := range m {
-		f := Node{
+
+		p := filepath.Dir(cmd)
+		if dirzid[p] == 0 {
+		for {
+			if dirzid[p] == 0 {
+				dir := Node{
+					Id: "d" + strconv.Itoa(did),
+					Label: p,
+					Size: 1,
+				}
+
+				dirzid[p] = did
+				graph.Nodes = append(graph.Nodes, dir)
+				did++
+			} else {
+				break
+			}
+
+			if p == "/" {
+				break
+			}
+
+			p = filepath.Dir(p)
+		}
+		}
+
+		p = filepath.Dir(cmd)
+		if dirzid[p] != 0 {
+			//make a connection 
+			edge := Edge{
+				Id: "e" + strconv.Itoa(eid),
+				Source: "d" + strconv.Itoa(dirzid[p]),
+				Target: "f" + strconv.Itoa(fid),
+			}
+			graph.Edges = append(graph.Edges, edge)
+			eid++
+		}
+
+		binfile := Node{
+			Id: "f" + strconv.Itoa(fid),
 			Label: cmd,
 			Size: cnt,
 		}
-
-		graph.Nodes = append(graph.Nodes, f)
+		graph.Nodes = append(graph.Nodes, binfile)
+		fid++
 	}
 
 q, er1 := json.Marshal(graph)
