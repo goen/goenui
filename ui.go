@@ -20,6 +20,11 @@ func hdrs(w http.ResponseWriter) {
     headers.Add("Content-Type", "text/html")
 }
 
+func steps(w http.ResponseWriter, r *http.Request) {
+	hdrs(w)
+	w.Write([]byte(bingraph))
+}
+
 func init() {
     runtime.GOMAXPROCS(runtime.NumCPU())
 }
@@ -40,7 +45,7 @@ func main() {
 	rtr.HandleFunc("/", home)
 	rtr.HandleFunc("/b", binaries)
 
-	rtr.PathPrefix("/d/").Handler(http.StripPrefix("/d/",
+	rtr.PathPrefix("/d1/").Handler(http.StripPrefix("/d1/",
 		http.FileServer(http.Dir("./converter1/"))))
 
 //	rtr.HandleFunc("/b/f.json",

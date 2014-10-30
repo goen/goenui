@@ -1,9 +1,10 @@
 package main
 
-import ("fmt";"bufio";"os";"path/filepath";"encoding/gob";"encoding/json";"strconv";"io")
+import ("fmt";"bufio";"os";"path/filepath";"encoding/gob";"encoding/json";"strconv";"io";"math/rand";"math";"html/template")
 
 func iiiiiiiiiiii(i interface{}) {
-fmt.Println("");i=bufio.Writer{};i=os.File{};filepath.IsAbs("");i=json.Decoder{};i=io.EOF
+fmt.Println("");i=bufio.Writer{};i=os.File{};filepath.IsAbs("");i=json.Decoder{};i=io.EOF;i=rand.Rand{}
+math.Log(0)
 }
 
 type Fun struct {
@@ -67,9 +68,10 @@ func lddl() {
 type Node struct {
 	Id string	`json:"id"`
 	Label string	`json:"label"`
-	X int	`json:"x"`
-	Y int	`json:"y"`
-	Size int	`json:"size"`
+	X float64	`json:"x"`
+	Y float64	`json:"y"`
+	Size float64	`json:"size"`
+	Color string	`json:"color"`
 }
 type Edge struct {
 	Id string	`json:"id"`
@@ -79,6 +81,16 @@ type Edge struct {
 type Graph struct {
 	Nodes []Node `json:"nodes"`
 	Edges []Edge  `json:"edges"`
+}
+
+func rootnode() Node {
+	return Node{
+		Id: "d0",
+		Label: "/",
+		Size: 2,
+		X: 0,
+		Y: 0,
+	}
 }
 
 func main() {
@@ -95,6 +107,7 @@ func main() {
 
 	m := make(map[string]int)
 	dirzid := make(map[string]int)
+	dirid2chld := make(map[int]int)
 //	used := make(map[string]bool)
 
 	var v Fun
@@ -117,16 +130,27 @@ func main() {
 	eid := 0
 	did := 1
 	fid := 0
+
+	_ = fid
+	_ = eid
+
 	for cmd, cnt := range m {
+		_ = cnt
 
 		p := filepath.Dir(cmd)
-		if dirzid[p] == 0 {
 		for {
 			if dirzid[p] == 0 {
+
+//				fmt.Fprintln(os.Stderr, "Here we have a new dir:",did,":", p)
+
+
 				dir := Node{
 					Id: "d" + strconv.Itoa(did),
 					Label: p,
-					Size: 1,
+					Size: 0.2,
+					X: 0.,
+					Y: 0.,
+					Color: "#f00",
 				}
 
 				dirzid[p] = did
@@ -136,13 +160,33 @@ func main() {
 				break
 			}
 
-			if p == "/" {
+			if len(p) <= 1 {
 				break
 			}
 
 			p = filepath.Dir(p)
+
+			if p == "" {
+				p = "."
+			}
+
+			to := dirzid[p]
+			if to == 0 {
+				to = did
+			}
+
+			dirid2chld[to]++
+
+//			fmt.Fprintln(os.Stderr, "Making a connection from:", did-1, "to:", to)
+			edge := Edge{
+				Id: "e" + strconv.Itoa(eid),
+				Source: "d" + strconv.Itoa(did-1),
+				Target: "d" + strconv.Itoa(to),
+			}
+			graph.Edges = append(graph.Edges, edge)
+			eid++
 		}
-		}
+
 
 		p = filepath.Dir(cmd)
 		if dirzid[p] != 0 {
@@ -156,13 +200,18 @@ func main() {
 			eid++
 		}
 
+
 		binfile := Node{
 			Id: "f" + strconv.Itoa(fid),
 			Label: cmd,
-			Size: cnt,
+			Size: math.Log(float64(cnt)),
+			X: (rand.Float64() - 0.5)*0.5,
+			Y: (rand.Float64() - 0.5)*0.5,
+			Color: "#00f",
 		}
 		graph.Nodes = append(graph.Nodes, binfile)
 		fid++
+
 	}
 
 q, er1 := json.Marshal(graph)
@@ -170,12 +219,6 @@ if er1 != nil {
     fmt.Println("error:", er1)
 }
 os.Stdout.Write(q)
-//	fmt.Println("**********")
 
-
-
-//	_= enc.Encode(nodes)
-
-//	os.Stdout.Write(b)
 
 }
