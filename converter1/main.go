@@ -1,9 +1,9 @@
 package main
 
-import ("fmt";"bufio";"os";"path/filepath";"encoding/gob";"encoding/json";"strconv")
+import ("fmt";"bufio";"os";"path/filepath";"encoding/gob";"encoding/json";"strconv";"io")
 
 func iiiiiiiiiiii(i interface{}) {
-fmt.Println("");i=bufio.Writer{};i=os.File{};filepath.IsAbs("");i=json.Decoder{}
+fmt.Println("");i=bufio.Writer{};i=os.File{};filepath.IsAbs("");i=json.Decoder{};i=io.EOF
 }
 
 type Fun struct {
@@ -102,8 +102,9 @@ func main() {
 	for{
 	    er1 := dec.Decode(&v)
 	    if er1 != nil {
+		if er1 == io.EOF { break }
 		fmt.Println("decode:", er1)
-		break
+		return
 	    }
 		m[v.Xargs[0]]++
 	}

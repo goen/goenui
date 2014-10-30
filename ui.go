@@ -39,7 +39,13 @@ func main() {
 
 	rtr.HandleFunc("/", home)
 	rtr.HandleFunc("/b", binaries)
-	rtr.HandleFunc("/b/f.json", binaries)
+
+	rtr.PathPrefix("/d/").Handler(http.StripPrefix("/d/",
+		http.FileServer(http.Dir("./converter1/"))))
+
+//	rtr.HandleFunc("/b/f.json",
+
+//	http.FileServer(http.Dir("./converter1/o.json"))
 
 	rtr.PathPrefix("/v/").Handler(http.StripPrefix("/v/",
 		http.FileServer(http.Dir("./vendor/"))))
@@ -49,25 +55,3 @@ func main() {
 		log.Fatal(err)
 	}
 }
-
-/*
-package main
-
-import (
-
-)
-
-
-
-func main() {
-  rtr := mux.NewRouter()
-
-	rtr.HandleFunc("/b", binaries)
-//
-  http.Handle("/", rtr)
-
-
-  log.Println("Listening...")
-  http.ListenAndServe(":3000", nil)
-}
-*/

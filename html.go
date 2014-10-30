@@ -17,7 +17,7 @@ const (
 <script src="v/sigmajs/release-v1.0.3/sigma.min.js"></script>
 <script src="v/sigmajs/release-v1.0.3/plugins/sigma.parsers.json.min.js"></script>
 <script>
-  sigma.parsers.json('data.json', {
+  sigma.parsers.json('d/o.json', {
     container: 'container',
     settings: {
       defaultNodeColor: '#ec5148'
